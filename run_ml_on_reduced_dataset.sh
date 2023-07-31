@@ -1,14 +1,14 @@
-# #!/bin/bash
+#!/bin/bash
 
-# ## the following script compute the end-to-end process on the reduced dataset:
-# # 1) compute the accumulators to be able to quickly compute NICVs
-# # 2) extract 40 bandwidth based on the NICVs
-# # 3) compute the accumulators of the extracted bandwidth
-# # 4) run machine learning the evaluation (for all scenarii and differents of bandwidth)
-# # 5) display the results (figure and tabular) 
+## the following script compute the end-to-end process on the reduced dataset:
+# 1) compute the accumulators to be able to quickly compute NICVs
+# 2) extract 40 bandwidth based on the NICVs
+# 3) compute the accumulators of the extracted bandwidth
+# 4) run machine learning the evaluation (for all scenarii and differents of bandwidth)
+# 5) display the results (figure and tabular) 
 
 
-# # list of the scenarii
+# list of the scenarii
  declare -a tagmaps=('virtualization_identification'
 		    'executable_classification'
 		    'novelty_classification'                 
@@ -17,41 +17,41 @@
                     'obfuscation_classification'
                     'type_classification')
 
-# ################################################################################
-# ## compute the accumulators to be able to compute the nicvs/corr
-# # creat the directory
-# mkdir -p acc_raw_reduced_dataset
-# ## compute the accumulators (sum and sum of the square)
-# python pre-processings/accumulator.py\
-#        --lists lists_reduced_dataset/files_lists_tagmaps\=executable_classification.npy\
-#        --output acc_raw_reduced_dataset/\
-#        --window 8192 --overlap 4096 --core 15 
+################################################################################
+## compute the accumulators to be able to compute the nicvs/corr
+# creat the directory
+mkdir -p acc_raw_reduced_dataset
+## compute the accumulators (sum and sum of the square)
+python pre-processings/accumulator.py\
+       --lists lists_reduced_dataset/files_lists_tagmaps\=executable_classification.npy\
+       --output acc_raw_reduced_dataset/\
+       --window 8192 --overlap 4096 --core 15 
 
-# ################################################################################
-# ## extract the bandwidth selected by NICV computed using the accumulators
-# # creat the directory
-# mkdir -p traces_40bd_reduced_dataset
-# # run the computation
-# python pre-processings/bandwidth_extractor.py --acc acc_raw_reduced_dataset\
-#        --lists lists_reduced_dataset/files_lists_tagmaps=executable_classification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=novelty_classification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=packer_identification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=virtualization_identification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=family_classification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=obfuscation_classification.npy\
-#                lists_reduced_dataset/files_lists_tagmaps=type_classification.npy\
-#                --nb_of_bandwidth 40 --output_traces traces_40bd_reduced_dataset\
-#                --output_lists lists_reduced_dataset/\
-#                --window 8192 --overlap 4096 --core 20
+################################################################################
+## extract the bandwidth selected by NICV computed using the accumulators
+# creat the directory
+mkdir -p traces_40bd_reduced_dataset
+# run the computation
+python pre-processings/bandwidth_extractor.py --acc acc_raw_reduced_dataset\
+       --lists lists_reduced_dataset/files_lists_tagmaps=executable_classification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=novelty_classification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=packer_identification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=virtualization_identification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=family_classification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=obfuscation_classification.npy\
+               lists_reduced_dataset/files_lists_tagmaps=type_classification.npy\
+               --nb_of_bandwidth 40 --output_traces traces_40bd_reduced_dataset\
+               --output_lists lists_reduced_dataset/\
+               --window 8192 --overlap 4096 --core 20
 
-# ################################################################################
-# ## compute the accumulation of the extracted bandwidth
-# # creat the directory
-# mkdir -p acc_stft_reduced_dataset
-# # run tu computation
-# python pre-processings/accumulator.py\
-#        --lists lists_reduced_dataset/extracted_bd_files_lists_tagmaps\=executable_classification.npy\
-#        --output acc_stft_reduced_dataset/ --no_stft --device npy --core 10 
+################################################################################
+## compute the accumulation of the extracted bandwidth
+# creat the directory
+mkdir -p acc_stft_reduced_dataset
+# run tu computation
+python pre-processings/accumulator.py\
+       --lists lists_reduced_dataset/extracted_bd_files_lists_tagmaps\=executable_classification.npy\
+       --output acc_stft_reduced_dataset/ --no_stft --device npy --core 10 
 
 ################################################################################
 ## evaluate: LDA + {NB, SVM}
